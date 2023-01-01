@@ -13,22 +13,32 @@
     />
     <KeyboardComponent @key="onKey" />
   </div>
+  <PopUp v-if="popupOpen" :setPopup="setPopup">
+    <div class="max-w-[240px]">
+      <p class="self-start">Whoops! Invalid Link.</p>
+    </div>
+  </PopUp>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import KeyboardComponent from './KeyboardComponent.vue';
+import KeyboardComponent from "./KeyboardComponent.vue";
 import { onUnmounted, reactive } from 'vue'
 import RowComponent from "./RowComponent.vue";
+import PopUp from "./PopUp.vue";
 
 const route = useRoute();
-
+const popupOpen = ref(false);
 const id = route.path.substring(1);
 const decoded = window.atob(id);
 
 const wordEnglish = ref(decoded.split("#")[1]);
 const wordGerman = ref(decoded.split("#")[2]);
+
+const setPopup = (bool: boolean) => {
+  bool ? (popupOpen.value = true) : (popupOpen.value = false);
+};
 
 const state = reactive({
   guesses: ["", "", "", "", "", ""],
@@ -40,6 +50,15 @@ const state = reactive({
 //Todo: validate if the decoded string is valid (should start with huxle, should have 2 hashtags, total length should be 17 characters)
 //If valid: start game
 //If invalid: show error pop-up (example in CreateHuxle.vue)
+if (!(
+    decoded.length == 17 &&
+    decoded[5] === "#" &&
+    decoded[11] == "#" &&
+    decoded.split("#")[0] === "huxle"
+  )) 
+{
+  setPopup(true);
+}
 
 const onKeyup = (e: KeyboardEvent) => onKey(e.key)
 
