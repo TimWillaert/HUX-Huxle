@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row flex justify-around my-4">
     <LetterComponent v-for="i in 5" :key="i" :letter="value[i - 1]"/>
   </div>
 </template>
@@ -18,10 +18,4 @@ const props = defineProps({
 
 </script>
 
-<style scoped>
-.row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 5px;
-}
-</style>
+<style scoped></style>

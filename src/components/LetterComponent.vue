@@ -1,34 +1,18 @@
 <template>
-  <div class="tile">
+  <div
+    class="flex justify-center items-center w-14 h-14 text-lg font-bold uppercase select-none relative bg-white text-black border-2 border-gray-500"
+  >
     {{ letter }}
   </div>
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps({
   letter: {
     type: String,
     default: " ",
-  }
+  },
 });
-
 </script>
 
-<style scoped>
-.tile {
-  width: 60px;
-  height: 60px;
-  font-size: 2rem;
-  line-height: 2rem;
-  font-weight: bold;
-  text-align: center;
-  justify-content: center;
-  text-transform: uppercase;
-  user-select: none;
-  position: relative;
-  background-color: white;
-  color: black;
-  border: 3px solid gray;
-}
-</style>
+<style scoped></style>
