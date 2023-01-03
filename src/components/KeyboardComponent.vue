@@ -1,4 +1,3 @@
-
 <template>
   <div id="keyboard">
     <div class="row" v-for="(row, i) in rows" v-bind:key="i">
@@ -8,8 +7,15 @@
         v-bind:class="[key.length > 1]"
         @click="$emit('key', key)"
         v-bind:key="key"
-        
-
+        :style="{
+          backgroundColor: greenKeys.includes(key)
+            ? '#5fa059'
+            : yellowKeys.includes(key)
+            ? '#c2ab4e'
+            : grayKeys.includes(key)
+            ? '#6d7173'
+            : 'white',
+        }"
       >
         <span v-if="key !== 'Backspace'">{{ key }}</span>
         <img v-else src="../assets/img/backspace.png" class="h-4" />
@@ -20,19 +26,24 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue';
 
 const emit = defineEmits<{
-  (e: "key", key: string): void;
+  (e: 'key', key: string): void;
 }>();
 
 const props = defineProps({
-  value: {
-    type: String,
-    default: "",
+  greenKeys: {
+    type: Array as PropType<string[]>,
+    default: () => [],
   },
-  color: {
-    type: String,
-    default: "white",
+  yellowKeys: {
+    type: Array as PropType<string[]>,
+    default: () => [],
+  },
+  grayKeys: {
+    type: Array as PropType<string[]>,
+    default: () => [],
   },
 
   solution: String,
@@ -40,9 +51,9 @@ const props = defineProps({
 });
 
 const rows = [
-  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-  ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"],
+  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+  ['Enter', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Backspace'],
 ];
 </script>
 
