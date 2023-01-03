@@ -1,16 +1,3 @@
-<script setup lang="ts">
-
-const emit = defineEmits<{
-  (e: "key", key: string): void;
-}>();
-
-const rows = [
-  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-  ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"],
-];
-
-</script>
 
 <template>
   <div id="keyboard">
@@ -18,9 +5,11 @@ const rows = [
       <div class="spacer" v-if="i === 1"></div>
       <button
         v-for="key in row"
-        :class="[key.length > 1 /*&& 'big', letterStates[key]*/]"
+        v-bind:class="[key.length > 1]"
         @click="$emit('key', key)"
         v-bind:key="key"
+        
+
       >
         <span v-if="key !== 'Backspace'">{{ key }}</span>
         <img v-else src="../assets/img/backspace.png" class="h-4" />
@@ -29,6 +18,33 @@ const rows = [
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+
+const emit = defineEmits<{
+  (e: "key", key: string): void;
+}>();
+
+const props = defineProps({
+  value: {
+    type: String,
+    default: "",
+  },
+  color: {
+    type: String,
+    default: "white",
+  },
+
+  solution: String,
+  submitted: Boolean,
+});
+
+const rows = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"],
+];
+</script>
 
 <style scoped>
 #keyboard {
