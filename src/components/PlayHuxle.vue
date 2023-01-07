@@ -17,11 +17,27 @@
       :grayKeys="state.grayKeys"
     />
   </div>
-  <PopUp v-if="popupOpen" :setPopup="setPopup">
+  <PopUp v-if="popupOpen" :setPopup="setPopup" :isEndgame="false">
     <div class="max-w-[240px]">
       <p class="self-start">Whoops! Invalid Link.</p>
     </div>
   </PopUp>
+  <EndNotification
+    v-if="endGameOpen"
+    :played-turns="state.currentGuess"
+    :set-popup="setEndGame"
+  >
+    <div class="mt-4">
+      <RowComponent
+        v-for="(guess, i) in state.guesses"
+        :key="i"
+        :value="guess"
+        :color="state.guessesResult[i]"
+        :solution="state.solution"
+        :submitted="i < state.currentGuess"
+      />
+    </div>
+  </EndNotification>
 </template>
 
 <script setup lang="ts">
@@ -31,17 +47,26 @@ import KeyboardComponent from './KeyboardComponent.vue';
 import { onUnmounted, reactive } from 'vue';
 import RowComponent from './RowComponent.vue';
 import PopUp from './PopUp.vue';
+import EndNotification from './EndNotification.vue';
 
 const route = useRoute();
 const popupOpen = ref(false);
+const endGameOpen = ref(false);
+
 const id = route.path.substring(1);
 const decoded = window.atob(id);
 
 const wordEnglish = ref(decoded.split('#')[1]);
 const wordGerman = ref(decoded.split('#')[2]);
 
+const savedGame = localStorage.getItem('huxle-game') || '';
+
 const setPopup = (bool: boolean) => {
   bool ? (popupOpen.value = true) : (popupOpen.value = false);
+};
+
+const setEndGame = (bool: boolean) => {
+  bool ? (endGameOpen.value = true) : (endGameOpen.value = false);
 };
 
 const state = reactive({
@@ -53,6 +78,17 @@ const state = reactive({
   yellowKeys: [''],
   grayKeys: [''],
 });
+
+if (savedGame != '') {
+  const savedState = JSON.parse(savedGame);
+  state.guesses = savedState.guesses;
+  state.guessesResult = savedState.guessesResult;
+  state.currentGuess = savedState.currentGuess;
+  state.solution = savedState.solution;
+  state.greenKeys = savedState.greenKeys;
+  state.yellowKeys = savedState.yellowKeys;
+  state.grayKeys = savedState.grayKeys;
+}
 
 //Todo: validate if the decoded string is valid (should start with huxle, should have 2 hashtags, total length should be 17 characters)
 //If valid: start game
@@ -83,8 +119,30 @@ function onKey(key: string) {
     if (guess.length == 5) {
       const result = compare(guess, state.solution);
       state.guessesResult[state.currentGuess] = result.join('');
-      // Move to next guess
-      state.currentGuess++;
+
+      //save game
+      localStorage.setItem('huxle-game', JSON.stringify(state));
+
+      //puzzle completition popus
+      if (
+        state.currentGuess <= 5 &&
+        state.solution.toLowerCase() == state.guesses[state.currentGuess]
+      ) {
+        state.currentGuess++;
+        localStorage.setItem('huxle-game', '');
+        setEndGame(true);
+      } else if (
+        state.currentGuess == 5 &&
+        state.solution.toLowerCase() != state.guesses[state.currentGuess]
+      ) {
+        state.currentGuess = 0;
+        localStorage.setItem('huxle-game', '');
+        setEndGame(true);
+      } else {
+        // Move to next guess
+        state.currentGuess++;
+      }
+
     }
   } else if (key === 'Backspace') {
     state.guesses[state.currentGuess] = guess.slice(0, -1);
