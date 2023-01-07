@@ -19,7 +19,7 @@
   </div>
   <PopUp v-if="popupOpen" :setPopup="setPopup" :isEndgame="false">
     <div class="max-w-[240px]">
-      <p class="self-start">Whoops! Invalid Link.</p>
+      <p class="self-start">{{ $t('invalidLink') }}</p>
     </div>
   </PopUp>
   <EndNotification
@@ -58,6 +58,7 @@ const decoded = window.atob(id);
 
 const wordEnglish = ref(decoded.split('#')[1]);
 const wordGerman = ref(decoded.split('#')[2]);
+const startLanguage = ref(decoded.split('#')[3]);
 
 const savedGame = localStorage.getItem('huxle-game') || '';
 
@@ -90,14 +91,12 @@ if (savedGame != '') {
   state.grayKeys = savedState.grayKeys;
 }
 
-//Todo: validate if the decoded string is valid (should start with huxle, should have 2 hashtags, total length should be 17 characters)
-//If valid: start game
-//If invalid: show error pop-up (example in CreateHuxle.vue)
 if (
   !(
-    decoded.length == 17 &&
+    decoded.length == 20 &&
     decoded[5] === '#' &&
     decoded[11] == '#' &&
+    decoded[17] == '#' &&
     decoded.split('#')[0] === 'huxle'
   )
 ) {
