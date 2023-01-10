@@ -1,12 +1,16 @@
 <template>
-  <div id="keyboard">
-    <div class="row" v-for="(row, i) in rows" v-bind:key="i">
-      <div class="spacer" v-if="i === 1"></div>
+  <div id="keyboard" class="mt-[30px] mb-[20px] mx-[8px] select-none">
+    <div
+      class="row flex w-full mt-[0] mx-auto mb-[8px] touch-manipulation"
+      v-for="(row, i) in rows"
+      v-bind:key="i"
+    >
       <button
         v-for="key in row"
         v-bind:class="[key.length > 1]"
         @click="$emit('key', key)"
         v-bind:key="key"
+        class="font-bold border-0 padding-0 m-0 mr-[5px] h-12 rounded cursor-pointer select-none bg-[#d3d6da] text-[#1a1a1b] flex-1 flex justify-center items-center uppercase"
         :style="{
           backgroundColor: greenKeys.includes(key)
             ? '#5fa059'
@@ -58,36 +62,7 @@ const rows = [
 </script>
 
 <style scoped>
-#keyboard {
-  margin: 30px 8px 20px 8px;
-  user-select: none;
-}
-.row {
-  display: flex;
-  width: 100%;
-  margin: 0 auto 8px;
-  touch-action: manipulation;
-}
-.spacer {
-  flex: 0.5;
-}
 button {
-  font-family: inherit;
-  font-weight: bold;
-  border: 0;
-  padding: 0;
-  margin: 0 5px 0 0;
-  height: 50px;
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  background-color: #d3d6da;
-  color: #1a1a1b;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: uppercase;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
   transition: all 0.2s 1.5s;
 }
