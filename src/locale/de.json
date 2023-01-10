@@ -1,0 +1,21 @@
+{
+    "english": "Englisch",
+    "german": "Deutsch",
+    "defaultLang": "Standardsprache",
+    "welcome": "Willkommen zu",
+    "start": "Beginnen Sie zu spielen, indem Sie einen Link mit einer Huxle-Spiel-ID verwenden",
+    "or": "ODER",
+    "createOwn": "Erstellen Sie Ihren eigenen Huxle",
+    "create": "Erstellen Sie einen Huxle",
+    "englishWord": "Englisches Wort",
+    "germanWord": "Deutsches Wort",
+    "createLink": "Link erstellen",
+    "linkShare": "Link zum Teilen",
+    "invalidLink": "Hoppla! Ungültiger Link.",
+    "changeLanguage":
+"       'Möchten Sie Ihren Fortschritt wirklich verwerfen und zu Englisch wechseln?",
+    "switch": "Zu englisch wechseln",
+    "cancel": "Abbrechen",
+    "guesses": "Vermutungen",
+    "time": "Zeit"
+}

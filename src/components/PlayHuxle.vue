@@ -80,11 +80,12 @@ const decoded = window.atob(id);
 
 const wordEnglish = ref(decoded.split('#')[1]);
 const wordGerman = ref(decoded.split('#')[2]);
+const startLanguage = ref(decoded.split('#')[3]);
 
-const startLanguage =
-  app?.appContext.config.globalProperties.$locale.value || 'en';
+// const startLanguage =
+//   app?.appContext.config.globalProperties.$locale.value || 'en';
 
-const solution = startLanguage == 'en' ? wordEnglish.value : wordGerman.value;
+const solution = startLanguage.value == 'en' ? wordEnglish.value : wordGerman.value;
 const started = ref(new Date());
 const ended = ref();
 const time = ref();
