@@ -5,7 +5,7 @@
     <div class="bg-white rounded-lg flex flex-col min-w-[260px] text-black">
       <button
         class="self-end m-2 bg-gray-400 hover:bg-gray-500 transition-colors p-3 rounded-md"
-        @click="setPopup(false)"
+        @click="setPopup(false); ; resetGame()"
       >
         <img src="../assets/img/close.png" class="h-4" />
       </button>
@@ -24,6 +24,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useHuxleStore } from './Store';
+const store = useHuxleStore();
 
 export default defineComponent({
   props: {
@@ -34,6 +36,11 @@ export default defineComponent({
     return {
       showNumberMessage: true,
     };
+  },
+  methods: {
+    resetGame() {
+      store.$reset();
+    },
   },
   computed: {
     numberMessage(): string {
@@ -78,9 +85,9 @@ export default defineComponent({
   },
   created() {
     setTimeout(() => {
-      // After 5 seconds, hide the number message and show the template
+      // After 3 seconds, hide the number message and show the template
       this.showNumberMessage = false;
-    }, 5000);
+    }, 3000);
   },
 });
 </script>

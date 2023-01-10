@@ -3,9 +3,11 @@ import App from './App.vue';
 import router from './router';
 import { createI18n } from 'vue-i18n';
 import './assets/style.css';
+import { createPinia } from 'pinia';
 
 const i18n = createI18n({
-  locale: 'en',
+  locale: localStorage.getItem('locale') || 'en',
+  legacy: false,
   messages: {
     en: {
       english: 'English',
@@ -20,7 +22,11 @@ const i18n = createI18n({
       germanWord: 'German word',
       createLink: 'Create link',
       linkShare: 'Link to share',
-      invalidLink: 'Whoops! Invalid link.'
+      invalidLink: 'Whoops! Invalid link.',
+      changeLanguage:
+        'Do you really want to discard your progress and switch to "German"?',
+      switch: 'Switch to German',
+      cancel: 'Cancel',
     },
     de: {
       english: 'Englisch',
@@ -36,14 +42,22 @@ const i18n = createI18n({
       germanWord: 'Deutsches Wort',
       createLink: 'Link erstellen',
       linkShare: 'Link zum Teilen',
-      invalidLink: 'Hoppla! Ungültiger Link.'
+      invalidLink: 'Hoppla! Ungültiger Link.',
+      changeLanguage:
+        'Möchten Sie Ihren Fortschritt wirklich verwerfen und zu "Englisch" wechseln??',
+      switch: 'Zu englisch wechseln',
+      cancel: 'Abbrechen',
     },
   },
 });
 
+const pinia = createPinia();
 const app = createApp(App);
+
+app.config.globalProperties.$locale = i18n.global.locale;
 
 app.use(i18n);
 app.use(router);
+app.use(pinia);
 
 app.mount('#app');

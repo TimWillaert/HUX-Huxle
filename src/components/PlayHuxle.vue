@@ -2,53 +2,61 @@
   <div class="flex flex-col h-full max-h-full max-w-md mx-auto justify-between">
     <div class="mt-4">
       <RowComponent
-        v-for="(guess, i) in state.guesses"
+        v-for="(guess, i) in store.guesses"
         :key="i"
         :value="guess"
-        :color="state.guessesResult[i]"
-        :solution="state.solution"
-        :submitted="i < state.currentGuess"
+        :color="store.guessesResult[i]"
+        :solution="solution"
+        :submitted="i < store.currentGuess"
       />
     </div>
     <KeyboardComponent
       @key="onKey"
-      :greenKeys="state.greenKeys"
-      :yellowKeys="state.yellowKeys"
-      :grayKeys="state.grayKeys"
+      :greenKeys="store.greenKeys"
+      :yellowKeys="store.yellowKeys"
+      :grayKeys="store.grayKeys"
     />
   </div>
-  <PopUp v-if="popupOpen" :setPopup="setPopup" :isEndgame="false">
+  <PopUp v-if="popupOpen" :setPopup="setPopup">
     <div class="max-w-[240px]">
       <p class="self-start">{{ $t('invalidLink') }}</p>
     </div>
   </PopUp>
   <EndNotification
     v-if="endGameOpen"
-    :played-turns="state.currentGuess"
+    :played-turns="store.currentGuess"
     :set-popup="setEndGame"
   >
     <div class="mt-4">
       <RowComponent
-        v-for="(guess, i) in state.guesses"
+        v-for="(guess, i) in store.guesses"
         :key="i"
         :value="guess"
-        :color="state.guessesResult[i]"
-        :solution="state.solution"
-        :submitted="i < state.currentGuess"
+        :color="store.guessesResult[i]"
+        :solution="solution"
+        :submitted="i < store.currentGuess"
       />
     </div>
   </EndNotification>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import { useRoute } from 'vue-router';
 import KeyboardComponent from './KeyboardComponent.vue';
-import { onUnmounted, reactive } from 'vue';
+import { onUnmounted } from 'vue';
 import RowComponent from './RowComponent.vue';
 import PopUp from './PopUp.vue';
 import EndNotification from './EndNotification.vue';
+import { useHuxleStore } from './Store';
 
+const store = useHuxleStore();
+
+store.$state = localStorage.getItem('huxleState')
+  ? JSON.parse(localStorage.getItem('huxleState')!)
+  : store.$state;
+
+const app = getCurrentInstance();
 const route = useRoute();
 const popupOpen = ref(false);
 const endGameOpen = ref(false);
@@ -58,10 +66,11 @@ const decoded = window.atob(id);
 
 const wordEnglish = ref(decoded.split('#')[1]);
 const wordGerman = ref(decoded.split('#')[2]);
-const startLanguage = ref(decoded.split('#')[3]);
 
-const savedGame = localStorage.getItem('huxle-game') || '';
+const startLanguage =
+  app?.appContext.config.globalProperties.$locale.value || 'en';
 
+const solution = startLanguage == 'en' ? wordEnglish.value : wordGerman.value;
 const setPopup = (bool: boolean) => {
   bool ? (popupOpen.value = true) : (popupOpen.value = false);
 };
@@ -69,27 +78,6 @@ const setPopup = (bool: boolean) => {
 const setEndGame = (bool: boolean) => {
   bool ? (endGameOpen.value = true) : (endGameOpen.value = false);
 };
-
-const state = reactive({
-  guesses: ['', '', '', '', '', ''],
-  guessesResult: ['', '', '', '', '', ''],
-  currentGuess: 0,
-  solution: wordEnglish,
-  greenKeys: [''],
-  yellowKeys: [''],
-  grayKeys: [''],
-});
-
-if (savedGame != '') {
-  const savedState = JSON.parse(savedGame);
-  state.guesses = savedState.guesses;
-  state.guessesResult = savedState.guessesResult;
-  state.currentGuess = savedState.currentGuess;
-  state.solution = savedState.solution;
-  state.greenKeys = savedState.greenKeys;
-  state.yellowKeys = savedState.yellowKeys;
-  state.grayKeys = savedState.grayKeys;
-}
 
 if (
   !(
@@ -103,6 +91,12 @@ if (
   setPopup(true);
 }
 
+//Reset game in case the solution was given and the used did not close the results window
+if (store.guesses.includes(solution.toLowerCase())) {
+  store.$reset();
+  localStorage.setItem('huxleState', JSON.stringify(store.$state));
+}
+
 const onKeyup = (e: KeyboardEvent) => onKey(e.key);
 
 window.addEventListener('keyup', onKeyup);
@@ -112,41 +106,40 @@ onUnmounted(() => {
 });
 
 function onKey(key: string) {
-  if (state.currentGuess >= 6) return;
-  const guess = state.guesses[state.currentGuess];
+  const locale = app?.appContext.config.globalProperties.$locale ?? '';
+  if (store.currentGuess >= 6) return;
+  const guess = store.guesses[store.currentGuess];
   if (key === 'Enter') {
     if (guess.length == 5) {
-      const result = compare(guess, state.solution);
-      state.guessesResult[state.currentGuess] = result.join('');
-
-      //save game
-      localStorage.setItem('huxle-game', JSON.stringify(state));
+      const result = compare(guess, solution);
+      store.guessesResult[store.currentGuess] = result.join('');
 
       //puzzle completition popus
       if (
-        state.currentGuess <= 5 &&
-        state.solution.toLowerCase() == state.guesses[state.currentGuess]
+        store.currentGuess <= 5 &&
+        solution.toLowerCase() == store.guesses[store.currentGuess]
       ) {
-        state.currentGuess++;
-        localStorage.setItem('huxle-game', '');
+        store.currentGuess++;
+
         setEndGame(true);
       } else if (
-        state.currentGuess == 5 &&
-        state.solution.toLowerCase() != state.guesses[state.currentGuess]
+        store.currentGuess == 5 &&
+        solution.toLowerCase() != store.guesses[store.currentGuess]
       ) {
-        state.currentGuess = 0;
-        localStorage.setItem('huxle-game', '');
+        store.currentGuess = 0;
+
         setEndGame(true);
       } else {
         // Move to next guess
-        state.currentGuess++;
+        store.currentGuess++;
       }
-
+      //save game
+      localStorage.setItem('huxleState', JSON.stringify(store.$state));
     }
   } else if (key === 'Backspace') {
-    state.guesses[state.currentGuess] = guess.slice(0, -1);
+    store.guesses[store.currentGuess] = guess.slice(0, -1);
   } else if (guess.length < 5 && /^[a-zA-Z]$/.test(key)) {
-    state.guesses[state.currentGuess] += key;
+    store.guesses[store.currentGuess] += key;
   }
 }
 
@@ -162,23 +155,23 @@ function compare(guess: string, solution: string) {
   for (let i = 0; i < guess.length; i++) {
     if (guess[i] === solution[i]) {
       result.push(1);
-      if (state.greenKeys.length > 0) {
-        if (!state.greenKeys.includes(guess[i])) {
-          state.greenKeys.push(guess[i]);
+      if (store.greenKeys.length > 0) {
+        if (!store.greenKeys.includes(guess[i])) {
+          store.greenKeys.push(guess[i]);
         }
       }
     } else if (solution.includes(guess[i])) {
       result.push(3);
-      if (state.yellowKeys.length > 0) {
-        if (!state.yellowKeys.includes(guess[i])) {
-          state.yellowKeys.push(guess[i]);
+      if (store.yellowKeys.length > 0) {
+        if (!store.yellowKeys.includes(guess[i])) {
+          store.yellowKeys.push(guess[i]);
         }
       }
     } else {
       result.push(2);
-      if (state.grayKeys.length > 0) {
-        if (!state.grayKeys.includes(guess[i])) {
-          state.grayKeys.push(guess[i]);
+      if (store.grayKeys.length > 0) {
+        if (!store.grayKeys.includes(guess[i])) {
+          store.grayKeys.push(guess[i]);
         }
       }
     }
