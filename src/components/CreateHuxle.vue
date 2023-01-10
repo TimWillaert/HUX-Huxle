@@ -69,6 +69,9 @@ import { ref } from 'vue';
 import PopUp from './PopUp.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { containsSpecialChars } from '../helpers/validation';
+import { useHuxleStore } from './Store';
+
+const store = useHuxleStore();
 
 const popupOpen = ref(false);
 const defaultLang = ref('en');
@@ -102,6 +105,10 @@ const validateWord = (value: string) => {
 
 const onSubmit = (values: { english: string; german: string }) => {
   if (validateWord(values.english) && validateWord(values.german)) {
+    //reset previous state
+    store.$reset();
+    localStorage.setItem('huxleState', '');
+
     setPopup(true);
     let toEncode = `huxle#${values.english}#${values.german}#${defaultLang.value}`;
     let encoded = window.btoa(toEncode);
