@@ -64,7 +64,7 @@ const rows = [
 <style scoped>
 button {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
-  transition: all 0.2s 1.5s;
+  transition: all 0.2s;
 }
 button:last-of-type {
   margin: 0;
