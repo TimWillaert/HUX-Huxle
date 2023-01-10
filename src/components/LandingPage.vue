@@ -9,7 +9,7 @@
     <p class="my-7 text-sm text-gray-400">{{ $t('or') }}</p>
     <RouterLink
       to="/create"
-      class="border border-white/20 px-5 py-2 rounded-md hover:bg-black transition-colors"
+      class="create border border-white/20 px-5 py-2 rounded-md hover:bg-black transition-colors"
     >
       {{ $t('createOwn') }}
     </RouterLink>

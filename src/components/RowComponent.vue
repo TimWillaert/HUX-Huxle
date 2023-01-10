@@ -1,5 +1,5 @@
 <template>
-  <div class="row flex justify-around my-4">
+  <div class="row flex justify-around" :class="{'my-4': margin}">
     <LetterComponent
       v-for="i in 5"
       :style="{
@@ -29,6 +29,10 @@ const props = defineProps({
   color: {
     type: String,
     default: "white",
+  },
+  margin: {
+    type: Boolean,
+    default: true
   },
 
   solution: String,

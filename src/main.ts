@@ -27,6 +27,8 @@ const i18n = createI18n({
         'Do you really want to discard your progress and switch to "German"?',
       switch: 'Switch to German',
       cancel: 'Cancel',
+      guesses: 'Guesses',
+      time: 'Time'
     },
     de: {
       english: 'Englisch',
@@ -47,6 +49,8 @@ const i18n = createI18n({
         'Möchten Sie Ihren Fortschritt wirklich verwerfen und zu "Englisch" wechseln??',
       switch: 'Zu englisch wechseln',
       cancel: 'Abbrechen',
+      guesses: 'Vermutungen',
+      time: 'Zeit'
     },
   },
 });

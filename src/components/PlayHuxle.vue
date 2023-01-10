@@ -27,6 +27,19 @@
     :played-turns="store.currentGuess"
     :set-popup="setEndGame"
   >
+    <p class="font-bold">{{ $t('guesses') }}: {{ store.currentGuess }}</p>
+    <p class="font-bold">
+      {{ $t('time') }}:
+      {{
+        Math.floor(time / 60000) < 10
+          ? `0${Math.floor(time / 60000)}`
+          : Math.floor(time / 60000)
+      }}:{{
+        ((time % 60000) / 1000).toFixed(0).length == 1
+          ? `0${((time % 60000) / 1000).toFixed(0)}`
+          : ((time % 60000) / 1000).toFixed(0)
+      }}
+    </p>
     <div class="mt-4">
       <RowComponent
         v-for="(guess, i) in store.guesses"
@@ -35,6 +48,7 @@
         :color="store.guessesResult[i]"
         :solution="solution"
         :submitted="i < store.currentGuess"
+        :margin="false"
       />
     </div>
   </EndNotification>
@@ -71,12 +85,22 @@ const startLanguage =
   app?.appContext.config.globalProperties.$locale.value || 'en';
 
 const solution = startLanguage == 'en' ? wordEnglish.value : wordGerman.value;
+const started = ref(new Date());
+const ended = ref();
+const time = ref();
+
 const setPopup = (bool: boolean) => {
   bool ? (popupOpen.value = true) : (popupOpen.value = false);
 };
 
 const setEndGame = (bool: boolean) => {
-  bool ? (endGameOpen.value = true) : (endGameOpen.value = false);
+  if (bool) {
+    endGameOpen.value = true;
+    ended.value = new Date();
+    time.value = ended.value.getTime() - started.value.getTime();
+  } else {
+    endGameOpen.value = false;
+  }
 };
 
 if (
