@@ -6,13 +6,15 @@
       <button
         class="self-end m-2 bg-gray-400 hover:bg-gray-500 transition-colors p-3 rounded-md"
         @click="setPopup(false)"
+        v-if="!showNumberMessage"
       >
         <img src="../assets/img/close.png" class="h-4" />
       </button>
       <div
-        class="px-5 pb-5 pt-4 flex flex-grow flex-col justify-center items-center"
+        class="px-10 pb-5 flex flex-grow flex-col justify-center items-center"
+        :class="{ 'pt-4': !showNumberMessage, 'pt-10': showNumberMessage }"
       >
-        <p v-if="showNumberMessage">{{ numberMessage }}</p>
+        <p v-if="showNumberMessage" class="font-bold">{{ numberMessage }}</p>
         <img v-if="showNumberMessage" :src="srcImageForNumber" class="w-60" />
         <template v-else>
           <slot />
@@ -78,9 +80,9 @@ export default defineComponent({
   },
   created() {
     setTimeout(() => {
-      // After 5 seconds, hide the number message and show the template
+      // After 3 seconds, hide the number message and show the template
       this.showNumberMessage = false;
-    }, 5000);
+    }, 3000);
   },
 });
 </script>

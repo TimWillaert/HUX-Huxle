@@ -20,7 +20,9 @@ const i18n = createI18n({
       germanWord: 'German word',
       createLink: 'Create link',
       linkShare: 'Link to share',
-      invalidLink: 'Whoops! Invalid link.'
+      invalidLink: 'Whoops! Invalid link.',
+      guesses: 'Guesses',
+      time: 'Time'
     },
     de: {
       english: 'Englisch',
@@ -36,7 +38,9 @@ const i18n = createI18n({
       germanWord: 'Deutsches Wort',
       createLink: 'Link erstellen',
       linkShare: 'Link zum Teilen',
-      invalidLink: 'Hoppla! Ungültiger Link.'
+      invalidLink: 'Hoppla! Ungültiger Link.',
+      guesses: 'Vermutungen',
+      time: 'Zeit'
     },
   },
 });

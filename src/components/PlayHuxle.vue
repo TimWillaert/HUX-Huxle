@@ -27,6 +27,19 @@
     :played-turns="state.currentGuess"
     :set-popup="setEndGame"
   >
+    <p class="font-bold">{{ $t('guesses') }}: {{ state.currentGuess }}</p>
+    <p class="font-bold">
+      {{ $t('time') }}:
+      {{
+        Math.floor(time / 60000) < 10
+          ? `0${Math.floor(time / 60000)}`
+          : Math.floor(time / 60000)
+      }}:{{
+        ((time % 60000) / 1000).toFixed(0).length == 1
+          ? `0${((time % 60000) / 1000).toFixed(0)}`
+          : ((time % 60000) / 1000).toFixed(0)
+      }}
+    </p>
     <div class="mt-4">
       <RowComponent
         v-for="(guess, i) in state.guesses"
@@ -62,12 +75,22 @@ const startLanguage = ref(decoded.split('#')[3]);
 
 const savedGame = localStorage.getItem('huxle-game') || '';
 
+const started = ref(new Date());
+const ended = ref();
+const time = ref();
+
 const setPopup = (bool: boolean) => {
   bool ? (popupOpen.value = true) : (popupOpen.value = false);
 };
 
 const setEndGame = (bool: boolean) => {
-  bool ? (endGameOpen.value = true) : (endGameOpen.value = false);
+  if (bool) {
+    endGameOpen.value = true;
+    ended.value = new Date();
+    time.value = ended.value.getTime() - started.value.getTime();
+  } else {
+    endGameOpen.value = false;
+  }
 };
 
 const state = reactive({
@@ -141,7 +164,6 @@ function onKey(key: string) {
         // Move to next guess
         state.currentGuess++;
       }
-
     }
   } else if (key === 'Backspace') {
     state.guesses[state.currentGuess] = guess.slice(0, -1);
