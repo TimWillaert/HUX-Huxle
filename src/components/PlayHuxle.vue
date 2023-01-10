@@ -48,6 +48,7 @@
         :color="state.guessesResult[i]"
         :solution="state.solution"
         :submitted="i < state.currentGuess"
+        :margin="false"
       />
     </div>
   </EndNotification>
