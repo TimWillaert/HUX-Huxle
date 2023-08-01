@@ -1,28 +1,15 @@
+<!-- eslint-disable prettier/prettier -->
 <template>
   <div class="mt-10 flex flex-col">
     <p class="text-2xl">{{ $t('create') }}</p>
 
-    <Form @submit="onSubmit" class="flex flex-col">
+    <Form @submit=onSubmit class="flex flex-col">
       <label for="english" class="mt-10 mb-2">{{ $t('englishWord') }}</label>
-      <Field
-        type="text"
-        id="english"
-        name="english"
-        placeholder="Today"
-        maxlength="5"
-        :rules="validateWord"
-      />
+      <Field type="text" id="english" name="english" placeholder="Today" maxlength="5" :rules="validateWord" />
       <ErrorMessage name="english" class="mt-2 text-red-600/70 text-sm" />
 
       <label for="german" class="mt-6 mb-2">{{ $t('germanWord') }}</label>
-      <Field
-        type="text"
-        id="german"
-        name="german"
-        placeholder="Heute"
-        maxlength="5"
-        :rules="validateWord"
-      />
+      <Field type="text" id="german" name="german" placeholder="Heute" maxlength="5" :rules="validateWord" />
       <ErrorMessage name="german" class="mt-2 text-red-600/70 text-sm" />
 
       <label class="mt-6 mb-2">{{ $t('defaultLang') }}</label>
@@ -35,9 +22,7 @@
         <label class="ml-2" for="de">{{ $t('german') }}</label>
       </div>
 
-      <button
-        class="self-end mt-20 border border-white/20 px-5 py-2 rounded-md hover:bg-black transition-colors"
-      >
+      <button class="self-end mt-20 border border-white/20 px-5 py-2 rounded-md hover:bg-black transition-colors">
         {{ $t('createLink') }}
       </button>
     </Form>
@@ -47,17 +32,10 @@
     <div class="max-w-[240px]">
       <p class="self-start">{{ $t('linkShare') }}:</p>
       <div class="flex items-center">
-        <a
-          :href="link"
-          target="_blank"
-          class="underline max-w-full overflow-hidden whitespace-nowrap text-ellipsis bg-gray-200 p-2 rounded-md mt-1"
-          >{{ link }}</a
-        >
+        <a :href="link" target="_blank"
+          class="underline max-w-full overflow-hidden whitespace-nowrap text-ellipsis bg-gray-200 p-2 rounded-md mt-1">{{ link }}</a>
       </div>
-      <button
-        class="mt-10 w-full px-5 py-2 rounded-md bg-gray-400 hover:bg-gray-500 transition-colors"
-        @click="copyLink"
-      >
+      <button class="mt-10 w-full px-5 py-2 rounded-md bg-gray-400 hover:bg-gray-500 transition-colors" @click="copyLink">
         {{ copyText }}
       </button>
     </div>
@@ -67,7 +45,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import PopUp from './PopUp.vue';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field, ErrorMessage, type SubmissionContext } from 'vee-validate';
 import { containsSpecialChars } from '../helpers/validation';
 import { useHuxleStore } from './Store';
 
@@ -87,7 +65,7 @@ const copyLink = () => {
   copyText.value = 'Copied!';
 };
 
-const validateWord = (value: string) => {
+const validateWord = (value: any) => {
   if (!value) {
     return 'This field is required.';
   }
@@ -103,7 +81,12 @@ const validateWord = (value: string) => {
   return true;
 };
 
-const onSubmit = (values: { english: string; german: string }) => {
+interface FormValues {
+  english: string;
+  german: string;
+}
+
+const onSubmit = (values: any, actions: SubmissionContext) => {
   if (validateWord(values.english) && validateWord(values.german)) {
     //reset previous state
     store.$reset();
