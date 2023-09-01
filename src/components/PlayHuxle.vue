@@ -67,7 +67,7 @@ import { useHuxleStore } from './Store';
 const store = useHuxleStore();
 
 store.$state = localStorage.getItem('huxleState')
-  ? JSON.parse(localStorage.getItem('huxleState')!)
+  ? JSON.parse(localStorage.getItem('huxleState') || '""')
   : store.$state;
 
 const app = getCurrentInstance();
